@@ -2,11 +2,11 @@ using GeradorDeProvas.Dominio.Modulos.ModuloDisciplina;
 
 namespace GeradorDeProvas.Teste.Unidade.Modulos.ModuloDisciplina;
 
-[TestClass]
+[TestClass] //Declara que é uma classe de teste
 public sealed class DisciplinaTests
 {
     #region Teste de validacao
-    [TestMethod]
+    [TestMethod] //declara que é um metodo de teste
     public void Validar_Com_NomeVazio_DeveRetornarErro()
     {
         //arranjo [configura os dadinhos]
@@ -16,6 +16,7 @@ public sealed class DisciplinaTests
         List<string> erro = disciplina.Validar();
         //Assercao [checa o resultado comparando com o esperado]
         Assert.HasCount(1, erro);
+        Assert.AreEqual("O campo \"Nome\" deve conter entre 2 e 100 caracteres.", erro.First());
     }
     [TestMethod]
     public void Validar_Com_NomeCurto_DeveRetornarErro()
@@ -26,6 +27,7 @@ public sealed class DisciplinaTests
         List<string> erro = disciplina.Validar();
         //Assercao [checa o resultado comparando com o esperado]
         Assert.HasCount(1, erro);
+        Assert.AreEqual("O campo \"Nome\" teve ter no mínimo 2 caracteres!", erro.First());
     }
     [TestMethod]
     public void Validar_Com_NomeLongo_DeveRetornarErro()
@@ -36,6 +38,7 @@ public sealed class DisciplinaTests
         List<string> erro = disciplina.Validar();
         //Assercao [checa o resultado comparando com o esperado]
         Assert.HasCount(1, erro);
+        Assert.AreEqual("O campo \"Nome\" teve ter no máximo 100 caracteres!", erro.First());
     }
     #endregion
 }

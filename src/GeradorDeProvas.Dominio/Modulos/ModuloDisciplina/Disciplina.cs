@@ -23,8 +23,14 @@ public class Disciplina : EntidadeBase<Disciplina>, IEntidadeDoUsuario
     {
         List<string> erros = [];
 
-        if (string.IsNullOrWhiteSpace(Nome) || Nome.Length < 2 || Nome.Length > 100)
+        if (string.IsNullOrWhiteSpace(Nome))
             erros.Add("O campo \"Nome\" deve conter entre 2 e 100 caracteres.");
+       
+        else if (Nome.Length < 2)
+            erros.Add("O campo \"Nome\" teve ter no mínimo 2 caracteres!");
+       
+        else if (Nome.Length > 100)
+            erros.Add("O campo \"Nome\" teve ter no máximo 100 caracteres!");
 
         return erros;
     }
