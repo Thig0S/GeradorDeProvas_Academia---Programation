@@ -5,4 +5,7 @@
     <Project Path="src/GeradorDeProvas.Infra/GeradorDeProvas.Infra.csproj" />
     <Project Path="src/GeradorDeProvas.WebApp/GeradorDeProvas.WebApp.csproj" />
   </Folder>
+  <Folder Name="/test/">
+    <Project Path="test/GeradorDeProvas.Teste.Unidade/GeradorDeProvas.Teste.Unidade.csproj" />
+  </Folder>
 </Solution>
