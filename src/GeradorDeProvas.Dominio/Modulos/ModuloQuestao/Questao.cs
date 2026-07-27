@@ -33,8 +33,11 @@ public class Questao : EntidadeBase<Questao>, IEntidadeDoUsuario
     {
         List<string> erros = [];
 
-        if (string.IsNullOrWhiteSpace(Enunciado) || Enunciado.Length > 2000)
-            erros.Add("O campo \"Enunciado\" deve ser preenchido e conter no máximo 2000 caracteres.");
+        if (string.IsNullOrWhiteSpace(Enunciado))
+            erros.Add("O campo \"Enunciado\" deve ser preenchido!");
+        
+        if (Enunciado.Length > 2000)
+            erros.Add("O campo \"Enunciado\" deve ser conter no máximo 2000 caracteres.");
 
         if (Materia is null)
             erros.Add("O campo \"Matéria\" deve ser preenchido.");
