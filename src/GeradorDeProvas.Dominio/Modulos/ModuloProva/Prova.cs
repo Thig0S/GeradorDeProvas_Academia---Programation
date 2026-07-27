@@ -57,9 +57,9 @@ public sealed class Prova : EntidadeBase<Prova>, IEntidadeDoUsuario
         if (QuantidadeDeQuestoes <= 0)
             erros.Add("O campo \"Quantidade De Questões\" deve ser maior que 0.");
 
-        if(Materia is not null && Materia.Disciplina != Disciplina)
+        if (!ProvaRecuperacao && Materia is not null && !Equals(Materia.Disciplina, Disciplina))
             erros.Add("O campo \"Disciplina\" deve alinhar com a Disciplina da Materia.");
-            
+
         return erros;
     }
 }

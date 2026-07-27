@@ -38,8 +38,7 @@ public class ProvaTests
     [TestMethod]
     public void Validar_SemDisciplina_DeveRetornar_ErroCorrespondente()
     {
-        Disciplina disciplina = new("Matematica");
-        Materia materia = new("Algebra", 8, disciplina);
+        Materia materia = new("Algebra", 8, null);
 
         Prova prova = new("Prova de Matematica 8a serie", null!, materia, 8, 9, false);
 
@@ -96,21 +95,30 @@ public class ProvaTests
     public void Validar_QuantidadeDeQuestoesAbaxidoDeUm_DeveRetornar_ErroCorrespondente()
     {
         Disciplina disciplina = new("Matematica");
+        Materia materia = new("Algebra", 4, disciplina);
+
+        Prova prova = new("Prova de Matematica 8a serie", disciplina, materia, 4, 0, false);
+
+        List<string> erros = prova.Validar();
+
+        Assert.HasCount(1, erros);
+        Assert.AreEqual("O campo \"Quantidade De Questões\" deve ser maior que 0.",
+        erros.First());
+    }
+    [TestMethod]
+    public void Validar_MateriaFora_DaDisciplina_DeveRetornar_ErroCorrespondente()
+    {
+        Disciplina disciplina = new("Matematica");
         Disciplina disciplinaForaDaMateria = new("Portugues");
 
         Materia materia = new("Algebra", 7, disciplina);
 
-        Prova prova = new("Prova de Matematica 8a serie", disciplinaForaDaMateria, materia, 7, 0, false);
+        Prova prova = new("Prova de Matematica 8a serie", disciplinaForaDaMateria, materia, 7, 2, false);
 
         List<string> erros = prova.Validar();
 
         Assert.HasCount(1, erros);
         Assert.AreEqual("O campo \"Disciplina\" deve alinhar com a Disciplina da Materia.",
         erros.First());
-    }
-    [TestMethod]
-    public void Validar_MateriaFora_DaDisciplina_DeveRetornar_ErroCorrespondente()
-    {
-
     }
 }
