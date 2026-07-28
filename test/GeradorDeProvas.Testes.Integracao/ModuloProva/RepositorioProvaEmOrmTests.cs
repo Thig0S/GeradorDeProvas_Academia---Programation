@@ -58,18 +58,80 @@ public sealed class RepositorioProvaEmOrmTests
     [TestMethod]
     public void Editar_AtualizaProvaExistente()
     {
+        Disciplina disciplina = new("Matematica");
+        Materia materia = new("Algebra", 7, disciplina);
+
+        Prova prova = new("Prova de Matematica 8a serie", disciplina, materia, 7, 2, false);
+
+        List<Questao> questoesDisponiveis = Enumerable.Range(1, 5)
+        .Select(indice => new Questao($"Questão {indice}", materia, [new Alternativa("4", false), new Alternativa("7", true)]))
+        .ToList();
+
+        prova.SortearQuestoes(questoesDisponiveis, new Random(70));
+
+        repositorio.Cadastrar(prova);
+
+        Prova provaAtualizada = new("Prova de Algebra Linear", disciplina, null!, 9, 4, true);
+
+        bool conseguiuEditar = repositorio.Editar(prova.Id, provaAtualizada);
+        dbContext.ChangeTracker.Clear();
+
+        Assert.IsTrue(conseguiuEditar);
+        Assert.AreEqual("Prova de Algebra Linear", repositorio.SelecionarPorId(prova.Id)!.Titulo);
+
 
     }
 
     [TestMethod]
     public void Excluir_RemoveProvaExistente()
     {
+        Disciplina disciplina = new("Matematica");
+        Materia materia = new("Algebra", 7, disciplina);
+
+        Prova prova = new("Prova de Matematica 8a serie", disciplina, materia, 7, 2, false);
+
+        List<Questao> questoesDisponiveis = Enumerable.Range(1, 5)
+        .Select(indice => new Questao($"Questão {indice}", materia, [new Alternativa("4", false), new Alternativa("7", true)]))
+        .ToList();
+
+        prova.SortearQuestoes(questoesDisponiveis, new Random(70));
+
+        repositorio.Cadastrar(prova);
+
+        //act
+        bool consegiuExcluir = repositorio.Excluir(prova.Id);
+        dbContext.ChangeTracker.Clear();
+
+        Prova? ProvaExcluida = repositorio.SelecionarPorId(prova.Id);
+
+        Assert.IsTrue(consegiuExcluir);
+        Assert.IsNull(ProvaExcluida);
 
     }
 
     [TestMethod]
     public void SelecionarTodos_RetornaProvasComRelacionamentos()
     {
+        Disciplina disciplina = new("Matematica");
+        Materia materia = new("Algebra", 7, disciplina);
+
+        Prova prova = new("Prova de Matematica 8a serie", disciplina, materia, 7, 2, false);
+
+        List<Questao> questoesDisponiveis = Enumerable.Range(1, 5)
+        .Select(indice => new Questao($"Questão {indice}", materia, [new Alternativa("4", false), new Alternativa("7", true)]))
+        .ToList();
+
+        prova.SortearQuestoes(questoesDisponiveis, new Random(70));
+
+        repositorio.Cadastrar(prova);
+
+        //act
+        List<Prova> provas = repositorio.SelecionarTodos();
+
+        Assert.HasCount(1, provas);
+        Assert.AreEqual("Matematica", provas.First().Disciplina.Nome);
+        Assert.AreEqual("Algebra", provas.First().Materia!.Nome);
+        Assert.HasCount(2, provas.First().Questoes);
     }
 
     private GeradorDeProvasDbContext CriarDbContext(Guid userId)
