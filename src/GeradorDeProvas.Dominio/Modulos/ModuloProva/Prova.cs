@@ -67,4 +67,24 @@ public sealed class Prova : EntidadeBase<Prova>, IEntidadeDoUsuario
 
         return erros;
     }
+    public List<string> SortearQuestoes(List<Questao> questoesDisponiveis, Random? random = null)
+    {
+        List<string> erros = [];
+
+        List<Questao> questoesDistintas = questoesDisponiveis.DistinctBy(e => e.Id).ToList();
+
+        if (QuantidadeDeQuestoes < 1)
+            erros.Add("A quantidade de questões deve ser maior que zero.");
+
+        if (questoesDistintas.Count < QuantidadeDeQuestoes)
+            erros.Add("A quantidade de questões informadas é maior que a quantidade disponível");
+
+        Random gerador = random ?? Random.Shared;
+
+        Questoes = questoesDistintas.OrderBy(_ => gerador.Next())
+        .Take(QuantidadeDeQuestoes)
+        .ToList();
+
+        return erros;
+    }
 }
