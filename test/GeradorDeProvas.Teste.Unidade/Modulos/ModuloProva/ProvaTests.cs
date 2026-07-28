@@ -121,4 +121,24 @@ public class ProvaTests
         Assert.AreEqual("O campo \"Disciplina\" deve alinhar com a Disciplina da Materia.",
         erros.First());
     }
+    [TestMethod]
+    public void Validar_AtualizacaoDe_Prova()
+    {
+        Disciplina disciplina = new("Matematica");
+        Materia materia = new("Algebra", 7, disciplina);
+        Disciplina disciplina2 = new("Portugues");
+        Materia materia2 = new("Verbos", 9, disciplina2);
+
+        Prova prova = new("Algebra 02", disciplina, materia, 7, 10, false);
+        Prova provaAtualizada = new("Verbos", disciplina2, materia2, 9, 10, false);
+
+        prova.Atualizar(provaAtualizada);
+
+        Assert.AreEqual("Verbos", prova.Titulo);
+        Assert.AreSame(disciplina2, prova.Disciplina);
+        Assert.AreSame(materia2, prova.Materia);
+        Assert.AreEqual(9, prova.Serie);
+        Assert.AreEqual(10, prova.QuantidadeDeQuestoes);
+
+    }
 }

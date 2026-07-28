@@ -29,7 +29,12 @@ public sealed class Prova : EntidadeBase<Prova>, IEntidadeDoUsuario
 
     public override void Atualizar(Prova entidadeAtualizada)
     {
-        throw new NotImplementedException();
+        Titulo = entidadeAtualizada.Titulo;
+        Disciplina = entidadeAtualizada.Disciplina;
+        Materia = entidadeAtualizada.Materia;
+        Serie = entidadeAtualizada.Serie;
+        QuantidadeDeQuestoes = entidadeAtualizada.QuantidadeDeQuestoes;
+        ProvaRecuperacao = entidadeAtualizada.ProvaRecuperacao;
     }
 
     public override List<string> Validar()
