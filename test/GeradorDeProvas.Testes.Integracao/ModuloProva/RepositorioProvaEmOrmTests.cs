@@ -25,7 +25,12 @@ public sealed class RepositorioProvaEmOrmTests
         dbContext = CriarDbContext(Guid.NewGuid());
         repositorio = new RepositorioProvaEmOrm(dbContext);
     }
-
+    //limpa o garbage collector depois de cada teste
+    [TestCleanup]
+    public void LimparContexto()
+    {
+        dbContext.Dispose();
+    }
     [TestMethod]
     public void CadastrarESelecionarPorId_CarregaRelacionamentosDaProva()
     {
