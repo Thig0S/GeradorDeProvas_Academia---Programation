@@ -1,0 +1,85 @@
+using GeradorDeProvas.Dominio.Modulos.ModuloDisciplina;
+using GeradorDeProvas.Dominio.Modulos.ModuloMateria;
+using GeradorDeProvas.Dominio.Modulos.ModuloProva;
+using GeradorDeProvas.Dominio.Modulos.ModuloQuestao;
+using GeradorDeProvas.Infra.Compartilhado.Orm;
+using GeradorDeProvas.Infra.Modulos.ModuloProva;
+using GeradorDeProvas.Testes.Integracao.Identity;
+using Microsoft.EntityFrameworkCore;
+
+namespace GeradorDeProvas.Testes.Integracao.ModuloProva;
+
+[TestClass]
+public sealed class RepositorioProvaEmOrmTests
+{
+    //inicializa o repositorio da classe
+    private RepositorioProvaEmOrm repositorio = null!;
+    private GeradorDeProvasDbContext dbContext = null!;
+
+    //classe para a inicializacao dos testes
+    [TestInitialize]
+    public void InicializarRepositorio()
+    {
+        //atribui o teste para o atributo da classe
+
+        dbContext = CriarDbContext(Guid.NewGuid());
+        repositorio = new RepositorioProvaEmOrm(dbContext);
+    }
+
+    [TestMethod]
+    public void CadastrarESelecionarPorId_CarregaRelacionamentosDaProva()
+    {
+        //Arranjo
+
+        Disciplina disciplina = new("Matematica");
+        Materia materia = new("Algebra", 7, disciplina);
+
+        Prova prova = new("Prova de Matematica 8a serie", disciplina, materia, 7, 2, false);
+
+        List<Questao> questoesDisponiveis = Enumerable.Range(1, 5)
+        .Select(indice => new Questao($"Questão {indice}", materia, [new Alternativa("4", false), new Alternativa("7", true)]))
+        .ToList();
+
+        prova.SortearQuestoes(questoesDisponiveis, new Random(70));
+
+        repositorio.Cadastrar(prova);
+        dbContext.ChangeTracker.Clear();
+
+        Prova? provaSelecionada = repositorio.SelecionarPorId(prova.Id);
+
+        // Asserção
+        Assert.IsNotNull(provaSelecionada);
+        Assert.AreEqual("Prova de Matematica 8a serie", provaSelecionada.Titulo);
+        Assert.AreEqual(disciplina.Id, provaSelecionada.Disciplina.Id);
+        Assert.AreEqual(materia.Id, provaSelecionada.Materia!.Id);
+        Assert.HasCount(2, provaSelecionada.Questoes);
+    }
+
+    [TestMethod]
+    public void Editar_AtualizaProvaExistente()
+    {
+
+    }
+
+    [TestMethod]
+    public void Excluir_RemoveProvaExistente()
+    {
+
+    }
+
+    [TestMethod]
+    public void SelecionarTodos_RetornaProvasComRelacionamentos()
+    {
+    }
+
+    private GeradorDeProvasDbContext CriarDbContext(Guid userId)
+    {
+        DbContextOptions<GeradorDeProvasDbContext> options =
+            new DbContextOptionsBuilder<GeradorDeProvasDbContext>()
+            .UseInMemoryDatabase("GeradorDeProvasTestDb_Memory")
+            .Options;
+
+        return new GeradorDeProvasDbContext(options, new ProvedorDeUsuarioFake(userId));
+    }
+
+}
