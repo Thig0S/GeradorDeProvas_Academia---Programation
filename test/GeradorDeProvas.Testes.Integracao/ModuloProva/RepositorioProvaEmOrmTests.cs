@@ -97,10 +97,10 @@ public sealed class RepositorioProvaEmOrmTests
         prova.SortearQuestoes(questoesDisponiveis, new Random(70));
 
         repositorio.Cadastrar(prova);
-
-        //act
-        bool consegiuExcluir = repositorio.Excluir(prova.Id);
         dbContext.ChangeTracker.Clear();
+
+        //act   
+        bool consegiuExcluir = repositorio.Excluir(prova.Id);
 
         Prova? ProvaExcluida = repositorio.SelecionarPorId(prova.Id);
 
@@ -124,6 +124,7 @@ public sealed class RepositorioProvaEmOrmTests
         prova.SortearQuestoes(questoesDisponiveis, new Random(70));
 
         repositorio.Cadastrar(prova);
+        dbContext.ChangeTracker.Clear();
 
         //act
         List<Prova> provas = repositorio.SelecionarTodos();
