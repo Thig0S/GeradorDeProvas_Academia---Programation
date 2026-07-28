@@ -18,6 +18,10 @@ public sealed class Prova : EntidadeBase<Prova>, IEntidadeDoUsuario
     public List<Prova> Provas { get; set; } = [];
     public Guid UserId { get; set; }
 
+    public Prova()
+    {
+
+    }
     public Prova(string titulo, Disciplina disciplina, Materia? materia, int serie, int quantidadeDeQuestoes, bool provaRecuperacao)
     {
         Titulo = titulo;
