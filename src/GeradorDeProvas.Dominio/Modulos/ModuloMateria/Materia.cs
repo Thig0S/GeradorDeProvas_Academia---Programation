@@ -1,6 +1,7 @@
 using GeradorDeProvas.Dominio.Compartilhado;
 using GeradorDeProvas.Dominio.Compartilhado.Identity;
 using GeradorDeProvas.Dominio.Modulos.ModuloDisciplina;
+using GeradorDeProvas.Dominio.Modulos.ModuloProva;
 using GeradorDeProvas.Dominio.Modulos.ModuloQuestao;
 
 namespace GeradorDeProvas.Dominio.Modulos.ModuloMateria;
@@ -12,6 +13,7 @@ public class Materia : EntidadeBase<Materia>, IEntidadeDoUsuario
     public Disciplina Disciplina { get; set; } = null!;
     public List<Questao> Questoes { get; set; } = [];
     public Guid UserId { get; set; }
+    public List<Prova> Provas { get; set; } = [];
 
     public Materia()
     {

@@ -1,6 +1,7 @@
 using GeradorDeProvas.Dominio.Compartilhado;
 using GeradorDeProvas.Dominio.Compartilhado.Identity;
 using GeradorDeProvas.Dominio.Modulos.ModuloMateria;
+using GeradorDeProvas.Dominio.Modulos.ModuloProva;
 
 namespace GeradorDeProvas.Dominio.Modulos.ModuloQuestao;
 
@@ -10,6 +11,7 @@ public class Questao : EntidadeBase<Questao>, IEntidadeDoUsuario
     public Materia Materia { get; set; } = null!;
     public List<Alternativa> Alternativas { get; set; } = [];
     public Guid UserId { get; set; }
+    public List<Prova> Provas { get; set; } = [];
 
     public Questao()
     {
@@ -35,7 +37,7 @@ public class Questao : EntidadeBase<Questao>, IEntidadeDoUsuario
 
         if (string.IsNullOrWhiteSpace(Enunciado))
             erros.Add("O campo \"Enunciado\" deve ser preenchido!");
-        
+
         if (Enunciado.Length > 2000)
             erros.Add("O campo \"Enunciado\" deve ser conter no máximo 2000 caracteres.");
 

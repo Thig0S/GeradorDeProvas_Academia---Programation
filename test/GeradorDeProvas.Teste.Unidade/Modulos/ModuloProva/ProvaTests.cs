@@ -159,4 +159,16 @@ public class ProvaTests
         Assert.HasCount(5, prova.Questoes);
         Assert.HasCount(5, prova.Questoes.Select(q => q.Id).Distinct());
     }
+    [TestMethod]
+    public void ValidarProva_SemErros_NaoDeveRetornar_Erros()
+    {
+        Disciplina disciplina = new("Matematica");
+        Materia materia = new("Algebra", 8, disciplina);
+
+        Prova prova = new("Prova de matematica 01", disciplina, materia, 8, 9, false);
+
+        List<string> erros = prova.Validar();
+
+        Assert.HasCount(0, erros);
+    }
 }

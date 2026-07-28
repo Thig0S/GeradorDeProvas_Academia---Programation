@@ -15,6 +15,7 @@ public sealed class Prova : EntidadeBase<Prova>, IEntidadeDoUsuario
     public int QuantidadeDeQuestoes { get; set; }
     public bool ProvaRecuperacao { get; set; }
     public List<Questao> Questoes { get; set; } = [];
+    public List<Prova> Provas { get; set; } = [];
     public Guid UserId { get; set; }
 
     public Prova(string titulo, Disciplina disciplina, Materia? materia, int serie, int quantidadeDeQuestoes, bool provaRecuperacao)
