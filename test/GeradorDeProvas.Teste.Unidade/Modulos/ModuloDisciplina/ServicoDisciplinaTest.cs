@@ -55,4 +55,49 @@ public class ServicoDisciplinaTest
         repositorioDisciplina.Verify(r => r.Cadastrar(It.IsAny<Disciplina>()), Times.Never);
 
     }
+    [TestMethod]
+    public void ExcluirDisciplina_RemoveRegistro()
+    {
+        Mock<IRepositorioDisciplina> repositorioDisciplina = new Mock<IRepositorioDisciplina>();
+        Mock<IRepositorioMateria> repositorioMateria = new Mock<IRepositorioMateria>();
+
+        Disciplina disciplina = new("Matematica");
+
+        repositorioDisciplina.Setup(r => r.SelecionarPorId(disciplina.Id)).Returns(disciplina);
+
+        repositorioMateria.Setup(r => r.SelecionarTodos()).Returns([]);
+
+        ServicoDisciplina servicoDisciplina = new(repositorioDisciplina.Object, repositorioMateria.Object);
+
+        Result resultado =
+            servicoDisciplina.Excluir(disciplina.Id);
+
+        Assert.IsTrue(resultado.IsSuccess);
+
+        repositorioDisciplina.Verify(r => r.Excluir(disciplina.Id), Times.Once);
+    }
+
+
+    [TestMethod]
+    public void ExcluirDisciplina_ComMateriasVinculadas_RetornaFalha()
+    {
+        Mock<IRepositorioDisciplina> repositorioDisciplina = new Mock<IRepositorioDisciplina>();
+        Mock<IRepositorioMateria> repositorioMateria = new Mock<IRepositorioMateria>();
+
+        Disciplina disciplina = new("Matematica");
+
+        repositorioDisciplina.Setup(r => r.SelecionarPorId(disciplina.Id)).Returns(disciplina);
+
+        repositorioMateria.Setup(r => r.SelecionarTodos()).Returns([new Materia("Algebra", 7, disciplina)]);
+
+        ServicoDisciplina servicoDisciplina = new(repositorioDisciplina.Object, repositorioMateria.Object);
+
+        Result resultado =
+            servicoDisciplina.Excluir(disciplina.Id);
+
+        Assert.IsTrue(resultado.IsFailed);
+        Assert.Contains("matérias vinculadas", resultado.Errors.First().Message);
+
+        repositorioDisciplina.Verify(r => r.Excluir(disciplina.Id), Times.Never);
+    }
 }
