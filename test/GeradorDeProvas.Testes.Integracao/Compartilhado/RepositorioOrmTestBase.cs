@@ -1,4 +1,7 @@
+using FizzWare.NBuilder;
+using GeradorDeProvas.Dominio.Modulos.ModuloDisciplina;
 using GeradorDeProvas.Infra.Compartilhado.Orm;
+using GeradorDeProvas.Infra.Modulos.ModuloDisciplina;
 using GeradorDeProvas.Infra.Modulos.ModuloProva;
 using GeradorDeProvas.Testes.Integracao.Identity;
 using Microsoft.EntityFrameworkCore;
@@ -9,6 +12,7 @@ public abstract class RepositorioOrmTestBase
 {
     //inicializa o repositorio da classe
     protected GeradorDeProvasDbContext dbContext = null!;
+    protected RepositorioDisciplinaEmOrm repositorioDisciplina = null!;
 
     //classe para a inicializacao dos testes
     [TestInitialize]
@@ -17,8 +21,24 @@ public abstract class RepositorioOrmTestBase
         //atribui o teste para o atributo da classe
 
         dbContext = CriarDbContext(Guid.NewGuid());
+        repositorioDisciplina = new RepositorioDisciplinaEmOrm(dbContext);
+
+
+        //Metodo Persist = agora tera a ação de cadastrar no banco de dados, como se fosse um override
+        BuilderSetup.SetCreatePersistenceMethod<IList<Disciplina>>(disciplinas =>
+        {
+            foreach (Disciplina d in disciplinas)
+            {
+                repositorioDisciplina.Cadastrar(d);
+                dbContext.ChangeTracker.Clear();
+            }
+        });
+        BuilderSetup.SetCreatePersistenceMethod<Disciplina>(disciplina =>
+        {
+            repositorioDisciplina.Cadastrar(disciplina);
+        });
     }
-    
+
     //limpa o garbage collector depois de cada teste
     [TestCleanup]
     public void DescartarContexto()
