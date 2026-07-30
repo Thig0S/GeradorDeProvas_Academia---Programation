@@ -130,7 +130,7 @@ public sealed class ServicoMateriaTest
         repositorioMateria.Verify(r => r.Excluir(materia.Id), Times.Never);
     }
     [TestMethod]
-    public void Editar_ComDadosValidos_Persiste()
+    public void Editar_ComNomeRepetido_RetornaErro()
     {
         Mock<IRepositorioMateria> repositorioMateria = new();
         Mock<IRepositorioDisciplina> repositorioDisciplina = new();
@@ -141,6 +141,26 @@ public sealed class ServicoMateriaTest
             repositorioDisciplina.Object,
             repositorioQuestao.Object);
 
-        
+        Disciplina disciplina = Builder<Disciplina>.CreateNew()
+       .With(m => m.Nome = "Disciplina").Build();
+
+        Materia materiaComNomeRepetido = Builder<Materia>.CreateNew()
+        .With(m => m.Nome = "Matematica")
+        .With(m => m.Disciplina = disciplina).Build();
+
+        repositorioMateria.Setup(r => r.SelecionarTodos()).Returns([materiaComNomeRepetido]);
+        repositorioMateria.Setup(r => r.Editar(It.IsAny<Guid>(), It.IsAny<Materia>())).Returns(false);
+
+        Materia materia = Builder<Materia>.CreateNew()
+        .With(m => m.Nome = "Matematica")
+        .With(m => m.Disciplina = disciplina).Build();
+
+        Result resultado = servicoMateria.Editar(
+            new EditarMateriaDto(materia.Id, materia.Nome, 8, disciplina.Id));
+
+        Assert.IsTrue(resultado.IsFailed);
+        Assert.Contains("Já existe", resultado.Errors.First().Message);
+
+        repositorioMateria.Verify(r => r.Editar(It.IsAny<Guid>(), It.IsAny<Materia>()), Times.Never);
     }
 }
