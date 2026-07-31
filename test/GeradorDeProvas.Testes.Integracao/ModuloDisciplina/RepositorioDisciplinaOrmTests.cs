@@ -3,11 +3,12 @@ using GeradorDeProvas.Testes.Integracao.Compartilhado;
 using FizzWare.NBuilder;
 using GeradorDeProvas.Dominio.Modulos.ModuloDisciplina;
 using GeradorDeProvas.Dominio.Compartilhado;
+using GeradorDeProvas.Testes.Integracao.Compartilhado.Orm;
 
 namespace GeradorDeProvas.Testes.Integracao.ModuloDisciplina;
 
 [TestClass]
-public class RepositorioDisciplinaOrmTests : RepositorioOrmTestBase
+public class RepositorioDisciplinaOrmTests : RepositorioBaseEmOrmTests
 {
     [TestMethod]
     public void CadastrarESelecionarPorId_CarregaRegistro()

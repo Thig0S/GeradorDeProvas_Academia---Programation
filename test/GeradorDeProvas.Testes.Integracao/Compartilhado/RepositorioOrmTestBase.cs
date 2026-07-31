@@ -1,72 +1,85 @@
-using FizzWare.NBuilder;
-using GeradorDeProvas.Dominio.Modulos.ModuloDisciplina;
-using GeradorDeProvas.Dominio.Modulos.ModuloMateria;
 using GeradorDeProvas.Infra.Compartilhado.Orm;
 using GeradorDeProvas.Infra.Modulos.ModuloDisciplina;
-using GeradorDeProvas.Infra.Modulos.ModuloMateria;
 using GeradorDeProvas.Infra.Modulos.ModuloProva;
-using GeradorDeProvas.Testes.Integracao.Identity;
 using Microsoft.EntityFrameworkCore;
+using FizzWare.NBuilder;
+using GeradorDeProvas.Dominio.Modulos.ModuloDisciplina;
+using GeradorDeProvas.Infra.Modulos.ModuloMateria;
+using GeradorDeProvas.Dominio.Modulos.ModuloMateria;
+using GeradorDeProvas.Dominio.Modulos.ModuloProva;
+using GeradorDeProvas.Infra.Modulos.ModuloQuestao;
+using GeradorDeProvas.Dominio.Modulos.ModuloQuestao;
+using GeradorDeProvas.Testes.Integracao.Identity;
 
-namespace GeradorDeProvas.Testes.Integracao.Compartilhado;
+namespace GeradorDeProvas.Testes.Integracao.Compartilhado.Orm;
 
-public abstract class RepositorioOrmTestBase
+public abstract class RepositorioBaseEmOrmTests
 {
-    //inicializa o repositorio da classe
     protected GeradorDeProvasDbContext dbContext = null!;
     protected RepositorioDisciplinaEmOrm repositorioDisciplina = null!;
     protected RepositorioMateriaEmOrm repositorioMateria = null!;
+    protected RepositorioQuestaoEmOrm repositorioQuestao = null!;
+    protected RepositorioProvaEmOrm repositorioProva = null!;
 
-    //classe para a inicializacao dos testes
+    // Hooks / Ganchos
     [TestInitialize]
     public void InicializarContexto()
     {
-        //atribui o teste para o atributo da classe
-
         dbContext = CriarDbContext(Guid.NewGuid());
-        repositorioDisciplina = new RepositorioDisciplinaEmOrm(dbContext);
-        repositorioMateria = new RepositorioMateriaEmOrm(dbContext);
 
-        //Metodo Persist = agora tera a ação de cadastrar no banco de dados, como se fosse um override
-        BuilderSetup.SetCreatePersistenceMethod<IList<Disciplina>>(disciplinas =>
+        // Disciplina
+        repositorioDisciplina = new RepositorioDisciplinaEmOrm(dbContext);
+
+        BuilderSetup.SetCreatePersistenceMethod<Disciplina>(repositorioDisciplina.Cadastrar);
+        BuilderSetup.SetCreatePersistenceMethod<IList<Disciplina>>((disciplinas) =>
         {
             foreach (Disciplina d in disciplinas)
                 repositorioDisciplina.Cadastrar(d);
-
-            dbContext.ChangeTracker.Clear();
-        });
-        BuilderSetup.SetCreatePersistenceMethod<Disciplina>(disciplina =>
-        {
-            repositorioDisciplina.Cadastrar(disciplina);
         });
 
-        //Metodo persist do repositoMateria
+        // Materia
+        repositorioMateria = new RepositorioMateriaEmOrm(dbContext);
 
-        BuilderSetup.SetCreatePersistenceMethod<IList<Materia>>(materias =>
+        BuilderSetup.SetCreatePersistenceMethod<Materia>(repositorioMateria.Cadastrar);
+        BuilderSetup.SetCreatePersistenceMethod<IList<Materia>>((materias) =>
         {
-            foreach (Materia d in materias)
-                repositorioMateria.Cadastrar(d);
-
-            dbContext.ChangeTracker.Clear();
+            foreach (Materia m in materias)
+                repositorioMateria.Cadastrar(m);
         });
-        BuilderSetup.SetCreatePersistenceMethod<Materia>(Materia =>
+
+        // Questao
+        repositorioQuestao = new RepositorioQuestaoEmOrm(dbContext);
+
+        BuilderSetup.SetCreatePersistenceMethod<Questao>(repositorioQuestao.Cadastrar);
+        BuilderSetup.SetCreatePersistenceMethod<IList<Questao>>((questoes) =>
         {
-            repositorioMateria.Cadastrar(Materia);
+            foreach (Questao q in questoes)
+                repositorioQuestao.Cadastrar(q);
+        });
+
+        // Prova
+        repositorioProva = new RepositorioProvaEmOrm(dbContext);
+
+        BuilderSetup.SetCreatePersistenceMethod<Prova>(repositorioProva.Cadastrar);
+        BuilderSetup.SetCreatePersistenceMethod<IList<Prova>>((provas) =>
+        {
+            foreach (Prova p in provas)
+                repositorioProva.Cadastrar(p);
         });
     }
 
-    //limpa o garbage collector depois de cada teste
     [TestCleanup]
     public void DescartarContexto()
     {
         dbContext.Dispose();
     }
-    protected GeradorDeProvasDbContext CriarDbContext(Guid userId)
+
+    private static GeradorDeProvasDbContext CriarDbContext(Guid userId)
     {
         DbContextOptions<GeradorDeProvasDbContext> options =
             new DbContextOptionsBuilder<GeradorDeProvasDbContext>()
-            .UseInMemoryDatabase("GeradorDeProvasTestDb_Memory")
-            .Options;
+                .UseInMemoryDatabase("GeradorDeProvasTestDB_Memory")
+                .Options;
 
         return new GeradorDeProvasDbContext(options, new ProvedorDeUsuarioFake(userId));
     }

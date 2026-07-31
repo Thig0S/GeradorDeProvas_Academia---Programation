@@ -43,7 +43,7 @@ public sealed class ServicoProva(
             provaOriginal.Disciplina,
             provaOriginal.Materia,
             provaOriginal.Serie,
-            provaOriginal.QuantidadeQuestoes,
+            provaOriginal.QuantidadeDeQuestoes,
             provaOriginal.ProvaRecuperacao
         );
 
@@ -76,7 +76,7 @@ public sealed class ServicoProva(
                 p.Titulo,
                 p.Disciplina.Nome,
                 p.Materia?.Nome,
-                p.QuantidadeQuestoes,
+                p.QuantidadeDeQuestoes,
                 p.ProvaRecuperacao
             ))
             .ToList();
@@ -251,7 +251,7 @@ public sealed class ServicoProva(
             prova.Materia?.Id,
             prova.Materia?.Nome,
             prova.Serie,
-            prova.QuantidadeQuestoes,
+            prova.QuantidadeDeQuestoes,
             prova.ProvaRecuperacao,
             prova.Questoes.Select(q => new QuestaoProvaDto(
                 q.Id,

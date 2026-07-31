@@ -2,11 +2,12 @@ using FizzWare.NBuilder;
 using GeradorDeProvas.Dominio.Modulos.ModuloDisciplina;
 using GeradorDeProvas.Dominio.Modulos.ModuloMateria;
 using GeradorDeProvas.Testes.Integracao.Compartilhado;
+using GeradorDeProvas.Testes.Integracao.Compartilhado.Orm;
 
 namespace GeradorDeProvas.Testes.Integracao.ModuloMateria;
 
 [TestClass]
-public class RepositorioMateriaOrmTest : RepositorioOrmTestBase
+public class RepositorioMateriaOrmTest : RepositorioBaseEmOrmTests
 {
     [TestMethod]
     public void Cadastrar_Materia_E_SelecionarPorId()
