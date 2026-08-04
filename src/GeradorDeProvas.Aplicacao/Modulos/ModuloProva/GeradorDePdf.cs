@@ -1,4 +1,3 @@
-using GeradorDeProvas.Dominio.Modulos.ModuloQuestao;
 using QuestPDF.Fluent;
 using QuestPDF.Helpers;
 using QuestPDF.Infrastructure;
