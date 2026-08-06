@@ -1,5 +1,7 @@
 ﻿using System.Text.RegularExpressions;
 using GeradorDeProvas.Test.E2E.Compartilhado;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Identity.Client;
 using Microsoft.Playwright;
 using Microsoft.Playwright.MSTest;
@@ -20,12 +22,12 @@ public sealed class AutenticacaoE2ETests : PageTest
         UrlBase = Aplicacao.UrlBase!;
     }
     [TestCleanup]
-    public void LiberarAplicacao()
+    public async Task LiberarAplicacao()
     {
         try
         {
             if (Aplicacao is not null)
-                Aplicacao.Dispose();
+                await Aplicacao.DisposeAsync();
 
         }
         finally
@@ -65,5 +67,46 @@ public sealed class AutenticacaoE2ETests : PageTest
         //assert
         string rotaAbsoluta = new Uri(Page.Url).AbsolutePath;
         Assert.AreEqual("/", rotaAbsoluta);
+    }
+    [TestMethod]
+    public async Task Deve_EntrarEAutentiacr_Usuario_Valido()
+    {
+        //arrange
+        const string email = "novo.usuario@teste.local";
+        const string senha = "senha123!";
+
+        await RegistrarEAutenticarUsuario(email, senha);
+
+        //act
+        await Page.GotoAsync($"{UrlBase}/Autenticacao/Entrar");
+
+        await Page.GetByLabel("E-Mail").FillAsync(email);
+        await Page.GetByLabel("Senha").FillAsync(senha);
+
+        await Page.GetByRole(AriaRole.Button, new() { Name = "Entrar" }).ClickAsync();
+
+        string rotaAbsoluta = new Uri(Page.Url).AbsolutePath;
+        Assert.AreEqual("/", rotaAbsoluta);
+        await Expect(Page.GetByRole(AriaRole.Button, new() { Name = email })).ToBeVisibleAsync();
+    }
+    private async Task RegistrarEAutenticarUsuario(string email, string senha)
+    {
+        using IServiceScope scope = Aplicacao.Services.CreateScope();
+
+        UserManager<IdentityUser<Guid>> userManager =
+            scope.ServiceProvider.GetRequiredService<UserManager<IdentityUser<Guid>>>();
+
+        IdentityUser<Guid> user = new IdentityUser<Guid>()
+        {
+            Id = Guid.CreateVersion7(),
+            UserName = email,
+            Email = email
+        };
+
+        IdentityResult resultado = await userManager.CreateAsync(user, senha);
+
+        Assert.IsTrue(
+            resultado.Succeeded, string.Join("; ", resultado.Errors.Select(erro => erro.Description))
+        );
     }
 }
