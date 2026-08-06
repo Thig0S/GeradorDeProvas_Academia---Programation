@@ -1,4 +1,6 @@
 ﻿using System.Text.RegularExpressions;
+using GeradorDeProvas.Test.E2E.Compartilhado;
+using Microsoft.Identity.Client;
 using Microsoft.Playwright;
 using Microsoft.Playwright.MSTest;
 
@@ -7,15 +9,37 @@ namespace GeradorDeProvas.Test.E2E;
 [TestClass]
 public sealed class AutenticacaoE2ETests : PageTest
 {
-    private string urlBase = "http://localhost:8001";
+    private TestApplicationFactory Aplicacao = null!;
+    private string UrlBase { get; set; } = string.Empty;
 
+    [TestInitialize]
+    public async Task InicializarAplicacao()
+    {
+        Aplicacao = new TestApplicationFactory();
+
+        UrlBase = Aplicacao.UrlBase!;
+    }
+    [TestCleanup]
+    public void LiberarAplicacao()
+    {
+        try
+        {
+            if (Aplicacao is not null)
+                Aplicacao.Dispose();
+
+        }
+        finally
+        {
+            Aplicacao = null!;
+        }
+    }
     [TestMethod]
     public async Task Deve_Exibir_TelaDeLogin_Para_UsuarioAnonimo()
     {
         //arrange
 
         //act
-        await Page.GotoAsync($"{urlBase}");
+        await Page.GotoAsync($"{UrlBase}");
 
         //assert
         await Expect(Page).ToHaveTitleAsync(new Regex("Entrar"));
@@ -27,7 +51,7 @@ public sealed class AutenticacaoE2ETests : PageTest
         const string email = "novo.usuario@teste.local";
         const string senha = "senha123!";
 
-        await Page.GotoAsync($"{urlBase}/Autenticacao/Registrar");
+        await Page.GotoAsync($"{UrlBase}/Autenticacao/Registrar");
 
         //act
         await Page.GetByLabel("E-Mail").FillAsync(email);

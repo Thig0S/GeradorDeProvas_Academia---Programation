@@ -7,4 +7,5 @@ public sealed class NewRelicOptions
     public string EndpointUrl { get; set; } = string.Empty;
     public string ApplicationName { get; set; } = string.Empty;
     public string? LicenseKey { get; set; }
+    public bool Enabled { get; set; }
 }
